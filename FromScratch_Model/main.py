@@ -64,7 +64,8 @@ def main():
         scheduler=scheduler,
         device=device,
         num_epochs=EPOCHS,
-        save_dir=os.path.join(SAVE_DIR, MODEL_TYPE)
+        save_dir=os.path.join(SAVE_DIR, MODEL_TYPE),
+        patience=10
     )
     
     print(f'\nTraining completed! Best test accuracy: {results["best_test_acc"]:.4f}')
