@@ -64,10 +64,13 @@ class VideoDataset(Dataset):
         
         frames = torch.tensor(frames, dtype=torch.float32)
         
+        frames = frames.permute(1, 0, 2, 3)
+        
         if self.transform:
             frames = torch.stack([self.transform(frame) for frame in frames])
         
         return frames, label
+        
 #---------------------------------------------------------------------------
 
 def create_dataloaders(data_root, batch_size=8, num_frames=16, test_split=0.2, num_workers=2):
