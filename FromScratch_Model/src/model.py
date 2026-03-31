@@ -52,7 +52,8 @@ class ThreeDCNN(nn.Module):
         x = F.relu(self.fc1(x))
         x = self.dropout(x)
         x = self.fc2(x)
-
+        
+        return x
 #----------------------------------------------------------------------------------
 class CNNRNN(nn.Module):
     def __init__(self, num_classes=2, hidden_size=128, num_layers=2):
