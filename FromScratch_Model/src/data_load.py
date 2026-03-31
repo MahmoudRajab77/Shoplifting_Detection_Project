@@ -19,32 +19,6 @@ from sklearn.model_selection import train_test_split
 
 
 #------------------------------------------------------< Functions >---------------------------------------------------------
-
-class VideoDataset(Dataset):
-    def __init__(self, video_paths, labels, num_frames=16, transform=None):
-        self.video_paths = video_paths
-        self.labels = labels
-        self.num_frames = num_frames
-        self.transform = transform
-    #------------------------------------------------
-    def __len__(self):
-        return len(self.video_paths)
-    #------------------------------------------------
-    def __getitem__(self, idx):
-        video_path = self.video_paths[idx]
-        label = self.labels[idx]
-        
-        frames = self.load_video(video_path)
-        
-        if self.transform:
-            frames = [self.transform(frame) for frame in frames]
-        
-        frames = torch.stack(frames)
-        
-        return frames, label
-
-#---------------------------------------------------------------------
-
 def load_video(video_path, num_frames=16):
     cap = cv2.VideoCapture(video_path)
     
@@ -72,6 +46,31 @@ def load_video(video_path, num_frames=16):
     frames = frames.astype(np.float32) / 255.0
     
     return frames
+    
+#----------------------------------------------------------------------------
+
+class VideoDataset(Dataset):
+    def __init__(self, video_paths, labels, num_frames=16, transform=None):
+        self.video_paths = video_paths
+        self.labels = labels
+        self.num_frames = num_frames
+        self.transform = transform
+    #------------------------------------------------
+    def __len__(self):
+        return len(self.video_paths)
+    #------------------------------------------------
+    def __getitem__(self, idx):
+        video_path = self.video_paths[idx]
+        label = self.labels[idx]
+        
+        frames = load_video(video_path, self.num_frames)
+        
+        frames = torch.tensor(frames, dtype=torch.float32)
+        
+        if self.transform:
+            frames = torch.stack([self.transform(frame) for frame in frames])
+        
+        return frames, label
 
 #---------------------------------------------------------------------------
 
