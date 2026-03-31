@@ -75,7 +75,7 @@ def load_video(video_path, num_frames=16):
 
 #---------------------------------------------------------------------------
 
-def create_dataloaders(data_root, batch_size=8, num_frames=16, val_split=0.2, num_workers=2):
+def create_dataloaders(data_root, batch_size=8, num_frames=16, test_split=0.2, num_workers=2):
     video_paths = []
     labels = []
     
@@ -92,18 +92,17 @@ def create_dataloaders(data_root, batch_size=8, num_frames=16, val_split=0.2, nu
             video_paths.append(os.path.join(non_shoplifting_dir, filename))
             labels.append(0)
     
-    X_train, X_val, y_train, y_val = train_test_split(
-        video_paths, labels, test_size=val_split, stratify=labels, random_state=42
+    X_train, X_test, y_train, y_test = train_test_split(
+        video_paths, labels, test_size=test_split, stratify=labels, random_state=42
     )
     
     train_dataset = VideoDataset(X_train, y_train, num_frames=num_frames)
-    val_dataset = VideoDataset(X_val, y_val, num_frames=num_frames)
+    test_dataset = VideoDataset(X_test, y_test, num_frames=num_frames)
     
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     
-    return train_loader, val_loader
-
+    return train_loader, test_loader
 
 
 
