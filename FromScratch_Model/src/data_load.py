@@ -24,10 +24,7 @@ def load_video(video_path, num_frames=16):
     
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     
-    if total_frames < num_frames:
-        indices = np.linspace(0, total_frames - 1, num_frames).astype(int)
-    else:
-        indices = np.linspace(0, total_frames - 1, num_frames).astype(int)
+    indices = np.linspace(0, total_frames - 1, num_frames).astype(int)
     
     frames = []
     
@@ -71,7 +68,6 @@ class VideoDataset(Dataset):
             frames = torch.stack([self.transform(frame) for frame in frames])
         
         return frames, label
-
 #---------------------------------------------------------------------------
 
 def create_dataloaders(data_root, batch_size=8, num_frames=16, test_split=0.2, num_workers=2):
