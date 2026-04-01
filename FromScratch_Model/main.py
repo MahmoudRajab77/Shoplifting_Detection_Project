@@ -18,9 +18,9 @@ from src.train import train_model
 
 def main():
     DATA_ROOT = '/content/drive/MyDrive/Shop DataSet'
-    BATCH_SIZE = 16
+    BATCH_SIZE = 8
     NUM_FRAMES = 16
-    EPOCHS = 40
+    EPOCHS = 30
     LR = 0.0001
     SAVE_DIR = 'checkpoints'
     MODEL_TYPE = '3dcnn'
