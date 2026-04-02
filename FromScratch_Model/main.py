@@ -17,7 +17,7 @@ from src.train import train_model
 #------------------------------------------------------------------------< Fucntions >------------------------------------------------------------------------
 
 def main():
-    DATA_ROOT = '/content/drive/MyDrive/Shop DataSet'
+    DATA_ROOT = '/kaggle/input/Shop DataSet/Shop DataSet'
     BATCH_SIZE = 8
     NUM_FRAMES = 16
     EPOCHS = 30
