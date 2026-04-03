@@ -23,7 +23,7 @@ def main():
     EPOCHS = 30
     LR = 0.0001
     SAVE_DIR = 'checkpoints'
-    MODEL_TYPE = '3dcnn'
+    MODEL_TYPE = 'cnnrnn'
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f'Using device: {device}')
