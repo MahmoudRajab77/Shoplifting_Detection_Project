@@ -39,7 +39,7 @@ def train_epoch(model, train_loader, criterion, optimizer, device):
         running_loss += loss.item()
         
         _, preds = torch.max(outputs, 1)
-        all_preds.extend(preds.cpu().numpy())
+        all_preds.extend(preds.cpu().detach().numpy())
         all_labels.extend(labels.cpu().numpy())
         
         pbar.set_postfix({'loss': loss.item()})
@@ -69,7 +69,7 @@ def test_epoch(model, test_loader, criterion, device):
             running_loss += loss.item()
             
             _, preds = torch.max(outputs, 1)
-            all_preds.extend(preds.cpu().numpy())
+            all_preds.extend(preds.cpu().detach().numpy())
             all_labels.extend(labels.cpu().numpy())
             
             pbar.set_postfix({'loss': loss.item()})
