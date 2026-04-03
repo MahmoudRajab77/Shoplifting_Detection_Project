@@ -64,7 +64,7 @@ class VideoDataset(Dataset):
         
         frames = torch.tensor(frames, dtype=torch.float32)
         
-        frames = frames.permute(1, 0, 2, 3)
+        #frames = frames.permute(1, 0, 2, 3)
         
         if self.transform:
             frames = torch.stack([self.transform(frame) for frame in frames])
