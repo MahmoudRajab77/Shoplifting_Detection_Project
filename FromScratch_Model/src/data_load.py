@@ -91,7 +91,7 @@ def create_dataloaders(data_root, batch_size=8, num_frames=16, test_split=0.2, n
             labels.append(0)
     
     X_train, X_test, y_train, y_test = train_test_split(
-        video_paths, labels, test_size=test_split, stratify=labels, random_state=42
+        video_paths, labels, test_size=test_split, stratify=labels, random_state=99
     )
     
     train_dataset = VideoDataset(X_train, y_train, num_frames=num_frames)
