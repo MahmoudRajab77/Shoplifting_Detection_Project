@@ -18,7 +18,7 @@ from src.train import train_model
 
 def main():
     DATA_ROOT = '/kaggle/input/datasets/mahmoudrajab/shoplifting-dataset/Shop DataSet/Shop DataSet'
-    BATCH_SIZE = 16
+    BATCH_SIZE = 8
     NUM_FRAMES = 20
     EPOCHS = 20
     LR = 0.0001
