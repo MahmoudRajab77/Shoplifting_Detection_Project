@@ -18,9 +18,9 @@ from src.train import train_model
 
 def main():
     DATA_ROOT = '/kaggle/input/datasets/mahmoudrajab/shoplifting-dataset/Shop DataSet/Shop DataSet'
-    BATCH_SIZE = 8
+    BATCH_SIZE = 16
     NUM_FRAMES = 20
-    EPOCHS = 30
+    EPOCHS = 20
     LR = 0.0001
     SAVE_DIR = 'checkpoints'
     MODEL_TYPE = 'cnnrnn'
