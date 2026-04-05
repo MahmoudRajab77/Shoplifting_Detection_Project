@@ -101,25 +101,33 @@ class VideoDataset(Dataset):
 #------------------------------------------------------------------------------------------------
 
 def create_dataloaders(data_root, batch_size=8, num_frames=16, test_split=0.2, num_workers=2):
-    video_paths = []
-    labels = []
-    
     shoplifting_dir = os.path.join(data_root, 'shop lifters')
     non_shoplifting_dir = os.path.join(data_root, 'non shop lifters')
     
+    shoplifting_videos = []
+    non_videos = []
+    
     for filename in os.listdir(shoplifting_dir):
         if filename.endswith('.mp4'):
-            video_paths.append(os.path.join(shoplifting_dir, filename))
-            labels.append(1)
+            shoplifting_videos.append(os.path.join(shoplifting_dir, filename))
     
     for filename in os.listdir(non_shoplifting_dir):
         if filename.endswith('.mp4'):
-            video_paths.append(os.path.join(non_shoplifting_dir, filename))
-            labels.append(0)
+            non_videos.append(os.path.join(non_shoplifting_dir, filename))
     
-    X_train, X_test, y_train, y_test = train_test_split(
-        video_paths, labels, test_size=test_split, stratify=labels, random_state=42
+    shoplifting_train, shoplifting_test = train_test_split(
+        shoplifting_videos, test_size=test_split, random_state=42
     )
+    
+    non_train, non_test = train_test_split(
+        non_videos, test_size=test_split, random_state=42
+    )
+    
+    X_train = shoplifting_train + non_train
+    X_test = shoplifting_test + non_test
+    
+    y_train = [1] * len(shoplifting_train) + [0] * len(non_train)
+    y_test = [1] * len(shoplifting_test) + [0] * len(non_test)
     
     train_dataset = VideoDataset(X_train, y_train, num_frames=num_frames, augment=True)
     test_dataset = VideoDataset(X_test, y_test, num_frames=num_frames, augment=False)
@@ -128,5 +136,4 @@ def create_dataloaders(data_root, batch_size=8, num_frames=16, test_split=0.2, n
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     
     return train_loader, test_loader
-
 
