@@ -111,7 +111,7 @@ pip install -r requirements.txt
 
 ```bash
 cd FromScratch_Model
-python main.py --model 3dcnn --batch_size 8 --epochs 30
+python main.py 
 ```
 
 ### Training with Pretrained R3D
