@@ -16,16 +16,19 @@ class PretrainedR3D(nn.Module):
         self.model = video_models.r3d_18(pretrained=True)
         
         in_features = self.model.fc.in_features
-        
         self.model.fc = nn.Linear(in_features, num_classes)
         
         if freeze_backbone:
             for param in self.model.parameters():
                 param.requires_grad = False
-            
             for param in self.model.fc.parameters():
                 param.requires_grad = True
     #-------------------------------------------------------
     def forward(self, x):
+        # x shape: (batch, num_frames, C, H, W)
+        batch_size, num_frames, C, H, W = x.shape
+        
+        # Permute to (batch, C, num_frames, H, W) for 3D CNN
+        x = x.permute(0, 2, 1, 3, 4)
+        
         return self.model(x)
-      
