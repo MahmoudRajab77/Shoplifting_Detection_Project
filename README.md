@@ -77,7 +77,7 @@ Shoplifting_Detection_Project/
 | Model | Test Accuracy | Test Loss | Best Train Loss | Epochs | Time/Epoch |
 |-------|--------------|-----------|-----------------|--------|------------|
 | 3D CNN | 100% | 0.0027 | 0.0045 | 30 | 5:24 |
-| CNN+RNN | 100% | 0.0039 | 0.0060 | 30 | 7:45 |
+| CNN+RNN | 100% | 0.0039 | 0.0061 | 30 | 7:45 |
 | CNN+RNN (Augmented) | 100% | 0.0038 | 0.0104 | 20 | 5:30 |
 | Pretrained R3D | 100% | 0.0257 | 0.0019 | 20 | 8:30 |
 
