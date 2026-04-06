@@ -23,21 +23,33 @@ The dataset consists of surveillance videos from a fixed camera position:
 
 ## Project Structure
 Shoplifting_Detection_Project/
+
 ├── FromScratch_Model/
+
 │ ├── src/
+
 │ │ ├── data_load.py # Data loading and preprocessing
+
 │ │ ├── model.py # Model architectures (3D CNN, CNN+RNN, Transformer)
+
 │ │ └── train.py # Training loop with early stopping
-│ ├── main.py # Training entry point
-│ └── checkpoints/ # Saved model weights
+
+│ └── main.py # Training entry point
+
 ├── PreTrained_Model/
+
 │ ├── src/
+
 │ │ ├── data_load.py # Same data pipeline
+
 │ │ ├── model.py # Pretrained R3D model
+
 │ │ └── train.py # Same training loop
-│ ├── main.py # Training entry point
-│ └── checkpoints/ # Saved model weights
+
+│ └── main.py # Training entry point
+
 ├── requirements.txt # Python dependencies
+
 └── README.md # This file
 
 
