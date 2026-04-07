@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shoplifting Detector – Upload Video</title>
+  <meta name="description" content="Upload a surveillance video to detect shoplifting behaviour using a Pretrained R3D model." />
+  {% load static %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'detector/style.css' %}" />
+</head>
+<body>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <main class="container">
+    <!-- Header -->
+    <header class="hero">
+      <div class="icon-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 7l-7 5 7 5V7z"/>
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+        </svg>
+      </div>
+      <h1>Shoplifting Detector</h1>
+      <p class="subtitle">Pretrained R3D · Real-time Inference · Upload &amp; Analyse</p>
+    </header>
+
+    <!-- Upload Card -->
+    <div class="card upload-card">
+      {% if errors %}
+        <div class="alert alert-error">
+          {% for field, errs in errors.items %}
+            {% for e in errs %}<p>{{ e }}</p>{% endfor %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'detector:predict' %}" enctype="multipart/form-data" id="upload-form">
+        {% csrf_token %}
+
+        <div class="dropzone" id="dropzone">
+          <input type="file" name="video" id="video-input"
+                 accept=".mp4,.avi,.mov,.mkv,.webm" required />
+          <div class="dropzone-content" id="dz-content">
+            <div class="dz-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="1.5">
+                <polyline points="16 16 12 12 8 16"/>
+                <line x1="12" y1="12" x2="12" y2="21"/>
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+              </svg>
+            </div>
+            <p class="dz-primary">Drag &amp; Drop your video here</p>
+            <p class="dz-secondary">or <span class="dz-browse">browse files</span></p>
+            <p class="dz-formats">MP4 · AVI · MOV · MKV · WEBM</p>
+          </div>
+          <div class="dropzone-preview hidden" id="dz-preview">
+            <div class="file-icon">🎬</div>
+            <p class="file-name" id="file-name-display"></p>
+            <p class="file-size" id="file-size-display"></p>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-wrap hidden" id="progress-wrap">
+          <div class="progress-bar" id="progress-bar"></div>
+          <p class="progress-label" id="progress-label">Uploading…</p>
+        </div>
+
+        <button type="submit" class="btn-primary" id="submit-btn" disabled>
+          <span class="btn-icon">🔍</span>
+          Analyse Video
+        </button>
+      </form>
+
+      <p class="hint">Max file size: 500 MB · Processing may take a few seconds</p>
+    </div>
+
+    <!-- How It Works -->
+    <div class="card info-card">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <strong>Upload</strong>
+            <p>Select a surveillance video clip</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <strong>Extract</strong>
+            <p>20 frames sampled from the video</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <strong>Classify</strong>
+            <p>Pretrained R3D analyses spatiotemporal features</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>
+            <strong>Result</strong>
+            <p>Prediction with confidence score</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const dropzone   = document.getElementById('dropzone');
+    const fileInput  = document.getElementById('video-input');
+    const dzContent  = document.getElementById('dz-content');
+    const dzPreview  = document.getElementById('dz-preview');
+    const fileNameEl = document.getElementById('file-name-display');
+    const fileSizeEl = document.getElementById('file-size-display');
+    const submitBtn  = document.getElementById('submit-btn');
+    const form       = document.getElementById('upload-form');
+    const progWrap   = document.getElementById('progress-wrap');
+    const progBar    = document.getElementById('progress-bar');
+    const progLabel  = document.getElementById('progress-label');
+
+    function formatBytes(b) {
+      if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+      return (b / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function showFile(file) {
+      dzContent.classList.add('hidden');
+      dzPreview.classList.remove('hidden');
+      fileNameEl.textContent = file.name;
+      fileSizeEl.textContent = formatBytes(file.size);
+      submitBtn.disabled = false;
+    }
+
+    dropzone.addEventListener('click', (e) => {
+      if (e.target !== fileInput) {
+        fileInput.click();
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) showFile(fileInput.files[0]);
+    });
+
+    dropzone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropzone.classList.add('drag-over');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropzone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
+        showFile(file);
+      }
+    });
+
+    form.addEventListener('submit', () => {
+      progWrap.classList.remove('hidden');
+      submitBtn.disabled = true;
+      let pct = 0;
+      const iv = setInterval(() => {
+        pct = Math.min(pct + Math.random() * 8, 90);
+        progBar.style.width = pct + '%';
+        progLabel.textContent = pct < 50 ? 'Uploading…' : 'Analysing with Pretrained R3D…';
+      }, 300);
+      // Clean up interval when page unloads
+      window.addEventListener('pagehide', () => clearInterval(iv));
+    });
+  </script>
+</body>
+</html>

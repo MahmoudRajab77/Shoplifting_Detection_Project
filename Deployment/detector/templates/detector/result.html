@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% if result.label == "shoplifting" %}
+    <title>⚠️ Shoplifting Detected – Result</title>
+  {% else %}
+    <title>✅ No Shoplifting – Result</title>
+  {% endif %}
+  <meta name="description" content="Shoplifting detection inference result." />
+  {% load static %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'detector/style.css' %}" />
+</head>
+<body>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <main class="container">
+    <!-- Header -->
+    <header class="hero">
+      <div class="icon-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 7l-7 5 7 5V7z"/>
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+        </svg>
+      </div>
+      <h1>Detection Result</h1>
+      <p class="subtitle">Pretrained R3D Inference Complete</p>
+    </header>
+
+    {% if result.error %}
+    <!-- Error card -->
+    <div class="card result-card result-error">
+      <div class="result-icon">⚠️</div>
+      <h2>Inference Error</h2>
+      <p class="error-msg">{{ result.error }}</p>
+    </div>
+
+    {% else %}
+    <!-- Result card -->
+    <div class="card result-card {% if result.label == 'shoplifting' %}result-danger{% else %}result-safe{% endif %}">
+      <div class="result-icon animate-pop">
+        {% if result.label == "shoplifting" %}🚨{% else %}✅{% endif %}
+      </div>
+      <h2 class="result-label">
+        {% if result.label == "shoplifting" %}Shoplifting Detected{% else %}No Shoplifting{% endif %}
+      </h2>
+      <p class="result-sublabel">
+        {% if result.label == "shoplifting" %}
+          The Pretrained R3D classified this clip as <strong>shoplifting behaviour</strong>.
+        {% else %}
+          The Pretrained R3D classified this clip as <strong>normal behaviour</strong>.
+        {% endif %}
+      </p>
+
+      <!-- Confidence Gauge -->
+      <div class="gauge-wrap">
+        <div class="gauge-label">Confidence</div>
+        <div class="gauge-bar-bg">
+          <div class="gauge-bar {% if result.label == 'shoplifting' %}gauge-danger{% else %}gauge-safe{% endif %}"
+               style="width: 0%"
+               data-target="{{ result.confidence|floatformat:4 }}">
+          </div>
+        </div>
+        <div class="gauge-pct">{{ result.confidence|floatformat:1 }}%</div>
+      </div>
+
+      <!-- Score breakdown -->
+      <div class="score-grid">
+        {% for lbl, score in result.scores.items %}
+        <div class="score-item {% if lbl == result.label %}score-active{% endif %}">
+          <div class="score-name">{{ lbl|title|cut:"_" }}</div>
+          <div class="score-value">
+            {% widthratio score 1 100 as pct %}{{ score|floatformat:3 }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Video preview -->
+    {% if result.video_url %}
+    <div class="card video-card">
+      <h2>Uploaded Clip</h2>
+      <video controls playsinline id="result-video">
+        <source src="{{ result.video_url }}" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    {% endif %}
+
+    {% endif %}
+
+    <!-- Back button -->
+    <a href="{% url 'detector:index' %}" class="btn-secondary">← Analyse Another Video</a>
+  </main>
+
+  <script>
+    // Animate confidence bar on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const bar = document.querySelector('.gauge-bar');
+      if (!bar) return;
+      const target = parseFloat(bar.dataset.target) * 100;
+      setTimeout(() => { bar.style.width = target + '%'; }, 200);
+    });
+  </script>
+</body>
+</html>
